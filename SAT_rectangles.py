@@ -2,30 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import pi
 
-# orthogonal of vector (x,y) is (y,-x)
-def orthogonal(v):
-    return (v[1], -v[0])
-
-def contains(n, range_):
-    a = range_[0]
-    b = range_[1]
-    if b < a:
-        a = range_[1]
-        b = range_[0]
-    return (n >= a) and (n <= b);
-
-def overlap(a, b):
-    if contains(a[0], b):
-        return True;
-    if contains(a[1], b):
-        return True;
-    if contains(b[0], a):
-        return True;
-    if contains(b[1], a):
-        return True;
-    return False;
-
-
 def SAT(rectA,rectB):
 
     axes = rectA.get_axes()
@@ -39,32 +15,49 @@ def SAT(rectA,rectB):
             return False;
     return True
 
+# orthogonal of vector (x,y) is (y,-x)
+def orthogonal(v):
+    return (v[1], -v[0])
 
+def contains(n, range_):
+    a = range_[0]
+    b = range_[1]
+    if b < a:
+        a = range_[1]
+        b = range_[0]
+    return (n >= a) and (n <= b);
+
+def overlap(a, b):
+    if contains(a[0], b) or contains(a[1], b) or \
+        contains(b[0], a) or contains(b[1], a):
+        return True
+    return False;
+
+#TODO almost all functions also work in a polygon setting aswell
 class rect(object):
     def __init__(self,center_x, center_y, width, height, theta):
-        self.center_x = center_x
-        self.center_y = center_y
-        self.width = width
-        self.height = height
-        self.theta = theta
 
         # compute vertexes on rect frame of reference (center is origin)
         # axis perpendicular to normals of the rect
         # vertexes clock-wise starting with bottom-left
         # bottom-right, top-right, top-left
         self.vertexes = np.array(\
-                        [[center_x - width/2, center_x + width/2, center_x + width/2, center_x - width/2],
-                        [center_y - height/2, center_y - height/2, center_y + height/2, center_y + height/2]])
+                        [[- width/2, width/2, width/2, - width/2],
+                        [- height/2,- height/2, height/2,  height/2]])
         
-        self.vertexes = rect.transform(self.vertexes, center_x, center_y, theta = theta)
+        self.vertexes = rect.rotate(self.vertexes, theta)
+        self.vertexes = rect.translate(self.vertexes,center_x,center_y)
+
 
     def __call__(self):
         for i in range(4):
-            plt.plot([self.vertexes[0][i-1],self.vertexes[0][i]],[self.vertexes[1][i-1],self.vertexes[1][i]],'k-', lw=2)
+            plt.plot([self.vertexes[0][i-1],self.vertexes[0][i]], 
+            [self.vertexes[1][i-1],self.vertexes[1][i]],'k-', lw=2)
 
     # index = 0 is first edge,1 second-edge
     def edge_direction(self,index):
-        return (self.vertexes[:,index%len(self.vertexes[0,:])] - self.vertexes[:,(index+1) % len(self.vertexes[0,:])])
+        return (self.vertexes[:,index%len(self.vertexes[0,:])] - \
+         self.vertexes[:,(index+1) % len(self.vertexes[0,:])])
 
     def vertices_to_edges(self):
         self.edges = [self.edge_direction(i) for i in range(len(self.vertexes[0,:]))]
