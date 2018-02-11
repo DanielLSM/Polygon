@@ -2,17 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import pi
 
-# plt.plot([70, 70], [100, 250], 'k-', lw=2)
-# plt.show()
-
-# def normalize(v):
-#     from math import sqrt
-#     norm = sqrt(v[0] ** 2 + v[1] ** 2)
-#     return (v[0] / norm, v[1] / norm)
-
-def dot(a, b):
-    return a[0] * b[0] + a[1] * b[1];
-
 # orthogonal of vector (x,y) is (y,-x)
 def orthogonal(v):
     return (v[1], -v[0])
@@ -75,10 +64,10 @@ class rect(object):
 
     # index = 0 is first edge,1 second-edge
     def edge_direction(self,index):
-        return (self.vertexes[:,index%4] - self.vertexes[:,(index+1) % 4])
+        return (self.vertexes[:,index%len(self.vertexes[0,:])] - self.vertexes[:,(index+1) % len(self.vertexes[0,:])])
 
     def vertices_to_edges(self):
-        self.edges = [self.edge_direction(i) for i in range(4)]
+        self.edges = [self.edge_direction(i) for i in range(len(self.vertexes[0,:]))]
 
     def get_axes(self):
         self.vertices_to_edges()
@@ -86,8 +75,8 @@ class rect(object):
     
     # No need to normalize
     def project(self, axis):
-        dots = [dot(self.vertexes[:,i], axis) for i in range(4)]
-        return [min(dots), max(dots)]
+        dots = [np.dot(axis, self.vertexes)]
+        return [np.min(dots), np.max(dots)]
 
     # T = R
     @classmethod
