@@ -48,19 +48,19 @@ class rect(object):
         self.vertexes = rect.rotate(self.vertexes, theta)
         self.vertexes = rect.translate(self.vertexes,center_x,center_y)
 
-
     def __call__(self):
         for i in range(4):
             plt.plot([self.vertexes[0][i-1],self.vertexes[0][i]], 
             [self.vertexes[1][i-1],self.vertexes[1][i]],'k-', lw=2)
-
+    
     # index = 0 is first edge,1 second-edge
     def edge_direction(self,index):
         return (self.vertexes[:,index%len(self.vertexes[0,:])] - \
          self.vertexes[:,(index+1) % len(self.vertexes[0,:])])
 
     def vertices_to_edges(self):
-        self.edges = [self.edge_direction(i) for i in range(len(self.vertexes[0,:]))]
+        self.edges = [self.edge_direction(i) \
+        for i in range(len(self.vertexes[0,:]))]
 
     def get_axes(self):
         self.vertices_to_edges()
@@ -96,6 +96,7 @@ class rect(object):
         matrix = rect.translate(matrix,center_x,center_y)
         return matrix
 
+
 if __name__ == '__main__':
     
     fig = plt.figure()
@@ -103,8 +104,8 @@ if __name__ == '__main__':
     ax.grid(color='r', linestyle='-', linewidth=1)
     ax.set_xlim([-2,2])
     ax.set_ylim([-2,2])
-    rectA = rect(0,0,1,2,45*pi/180)
-    rectB = rect(1,1,1,1,0*pi/180)
+    rectA = rect(1,1,1,1,90*pi/180)
+    rectB = rect(1,1,0.5,0.5,0*pi/180)
 
     if(SAT(rectA, rectB)): print("colliding")
     else: print("not colliding")
