@@ -25,7 +25,7 @@ def contains(n, range_):
     if b < a:
         a = range_[1]
         b = range_[0]
-    return (n >= a) and (n <= b);
+    return (n >= a) and (n <= b)
 
 def overlap(a, b):
     if contains(a[0], b) or contains(a[1], b) or \
@@ -104,8 +104,8 @@ if __name__ == '__main__':
     ax.grid(color='r', linestyle='-', linewidth=1)
     ax.set_xlim([-2,2])
     ax.set_ylim([-2,2])
-    rectA = rect(1,1,1,1,90*pi/180)
-    rectB = rect(1,1,0.5,0.5,0*pi/180)
+    rectA = rect(0,0,0.25,1.5,0*pi/180)
+    rectB = rect(0,0,1.5,0.25,0*pi/180)
 
     if(SAT(rectA, rectB)): print("colliding")
     else: print("not colliding")
