@@ -18,7 +18,7 @@ def plt_rects(rects, show=False):
     ax.set_aspect('equal', 'datalim')
     plt.savefig('figure.png')
     if show:
-        plot.show()
+        plt.show()
 
 
 def check_collisions_brute(rects):
