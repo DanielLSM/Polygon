@@ -2,7 +2,33 @@ import numpy as np
 from math import pi
 
 
+def check_collisions(rectangles):
+    """
+    Takes a list of rectangle objects and returns tuples of ids
+    of colliding rectangles.
+    """
+    rectangles.sort()
+    rect_radius = [rect._radius for rect in rectangles]
+    max_radius = np.max(rect_radius)
+    overlaps = []
+    for i, rect in enumerate(rectangles):
+        r1 = rect_radius[i]
+        for j, other_rect in enumerate(rectangles[i + 1:]):
+            r2 = rect_radius[j + i + 1]
+            diff = other_rect.center - rect.center
+            if diff[0] - r1 <= max_radius:
+                if np.linalg.norm(diff) <= r1 + r2:
+                    if SAT(rect, other_rect):
+                        overlaps.append((rect.id, other_rect.id))
+            else:
+                break
+    return overlaps
+
+
 def SAT(rectA, rectB):
+    ''' 
+    Seperating Axis Theorem
+    '''
     axes = rectA.get_axes()
     axes += rectB.get_axes()
 
@@ -37,10 +63,10 @@ def overlap(a, b):
 
 
 class Rectangle(object):
-    def __init__(self, x, y, dx, dy, length, width, agent_id):
+    def __init__(self, x, y, dx, dy, width, length, agent_id):
 
-        self._agent_id = agent_id
-        self._center = np.array([x, y])
+        self.id = agent_id
+        self.center = np.array([x, y])
         self._theta = np.arctan2(dx, dy)
         self._radius = np.linalg.norm([length, width]) / 2
         self.vertexes = np.array(\
@@ -51,10 +77,10 @@ class Rectangle(object):
 
     # Method defined for using the sort function
     def __lt__(self, other):
-        if self._center[0] != other.center[0]:
-            return self._center[0] < other._center[0]
+        if self.center[0] != other.center[0]:
+            return self.center[0] < other.center[0]
         else:
-            return self._center[1] < other._center[1]
+            return self.center[1] < other.center[1]
 
     # T = R
     @classmethod
